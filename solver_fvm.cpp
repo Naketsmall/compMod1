@@ -17,8 +17,8 @@ SolverFVM::SolverFVM(long double T, long double tau, long double X, long double 
                      long double (*f_a)(long double, long double),
                      long double (*f_beg)(long double)) : T(T), tau(tau), X(X), h(h), f_a(f_a) {
 
-    n_t = (int) (T / tau);
-    n_x = (int) (X / h);
+    n_t = (int) (T / tau)+1;
+    n_x = (int) (X / h)+1;
 
     for (int n = 0; n < n_t; n++) {
         field.emplace_back(n_x);
