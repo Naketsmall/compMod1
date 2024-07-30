@@ -2,19 +2,32 @@
 // Created by epsilon on 28.07.24.
 //
 
+#include <cstdio>
 #include "verifier.h"
 #include "cmath"
+
+long double ld_fmod(long double a, long double b) {
+    return a - static_cast<long long>(a / b) * b;
+}
+
+long long ld_fdiv(long double a, long double b) {
+    return static_cast<long long>(a / b);
+}
 
 Verifier::Verifier(std::vector<std::vector<long double>> &calculated,
                    long double T, long double tau, long double X, long double h, long double a,
                    long double(*f_beg)(long double))
-: calculated(calculated), tau(tau), h(h) {
+: calculated(calculated), T(T), tau(tau), X(X), h(h) {
     accurate = calculated;
     for (int n = 1; n < calculated.size(); n++) {
         for (int i = 0; i < calculated[0].size(); i++) {
-            accurate[n][i] = f_beg((i*h - n*tau*a) -  (int)((i*h - n*tau*a)/X)*X);
+            accurate[n][i] = f_beg((i*h - n*tau*a) +
+                    (i*h-n*tau*a < 0 ? X * (ld_fdiv(-(i*h-n*tau*a), X) + 1): 0));
+              //accurate[n][i] = f_beg(ld_fmod((i*h - n*tau*a), X));
         }
     }
+    //L1: 0.00008705738838428928
+    //Max: 0.00018530717932098052
 
     diff = calculated;
     for (int n = 0; n < calculated.size(); n++) {
@@ -47,8 +60,8 @@ long double Verifier::get_L1() {
     long double sum = 0;
     for (int n = 0; n < calculated.size(); n++) {
         for (int i = 0; i < calculated[0].size(); i++) {
-            sum += diff[n][i];
+            sum += std::abs(diff[n][i]);
         }
     }
-    return sum*h;
+    return sum / std::ceil(X / h) / std::ceil(T / tau);
 }

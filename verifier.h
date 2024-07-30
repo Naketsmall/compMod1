@@ -11,7 +11,7 @@
 ///
 class Verifier {
 private:
-    long double tau, h;
+    long double T, tau, X, h;
     std::vector<std::vector<long double>> accurate;
     std::vector<std::vector<long double>> calculated;
     std::vector<std::vector<long double>> diff;
