@@ -11,7 +11,7 @@ long double ld_fmod(long double a, long double b) {
 }
 
 long long ld_fdiv(long double a, long double b) {
-    return static_cast<long long>(a / b);
+    return static_cast<long long>((a) / b);
 }
 
 Verifier::Verifier(std::vector<std::vector<long double>> &calculated,
@@ -21,8 +21,8 @@ Verifier::Verifier(std::vector<std::vector<long double>> &calculated,
     accurate = calculated;
     for (int n = 1; n < calculated.size(); n++) {
         for (int i = 0; i < calculated[0].size(); i++) {
-            accurate[n][i] = f_beg((i*h - n*tau*a) +
-                    (i*h-n*tau*a < 0 ? X * (ld_fdiv(-(i*h-n*tau*a), X) + 1): 0));
+            accurate[n][i] = f_beg(((i+0.5l)*h - n*tau*a) +
+                    ((i+0.5l)*h-n*tau*a < 0 ? X * (ld_fdiv(-((i+0.5l)*h-n*tau*a), X) + 1): 0));
               //accurate[n][i] = f_beg(ld_fmod((i*h - n*tau*a), X));
         }
     }
