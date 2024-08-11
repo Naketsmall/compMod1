@@ -6,6 +6,7 @@
 #define COMPMOD_VERIFIER_H
 
 #include <vector>
+#include <string>
 
 /// должен сравнивать точное и посчитанное решения, находить нормы max, L1 от разницы решений
 ///
@@ -27,9 +28,8 @@ public:
     long double get_max();
     long double get_L1();
 
-
-
 };
+std::string vector2d_to_string(const std::vector<std::vector<long double>> &field);
 
 
 #endif //COMPMOD_VERIFIER_H

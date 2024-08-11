@@ -3,6 +3,8 @@
 //
 
 #include <cstdio>
+#include <sstream>
+#include <iomanip>
 #include "verifier.h"
 #include "cmath"
 
@@ -64,4 +66,19 @@ long double Verifier::get_L1() {
         }
     }
     return sum / std::ceil(X / h) / std::ceil(T / tau);
+}
+
+std::string vector2d_to_string(const std::vector<std::vector<long double>> &field) {
+    std::stringstream line;
+
+    for (int n = 0; n < field.size(); n++) {
+        for (int i = 0; i < field[0].size(); i++) {
+            if (i != field[0].size()-1)
+                line << std::fixed << std::setprecision(30) << field[n][i] << ",";// field[n][i] + ",";
+            else
+                line << std::fixed << std::to_string(field[n][i]);
+        }
+        line << "\n";
+    }
+    return std::move(line).str();
 }
