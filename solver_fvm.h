@@ -21,7 +21,6 @@ protected:
     std::function<long double(long double, long double, long double)> f_a, df_a;
     std::function<long double(long double)> f_beg, f_l, f_r;
 
-    virtual long double w_l(int n, int i, long double t) = 0;
     virtual long double w_r(int n, int i, long double t) = 0;
 
 public:
@@ -41,20 +40,6 @@ public:
 
     [[nodiscard]] const std::vector<long double> &getTaus() const;
     [[nodiscard]] const std::vector<std::vector<long double>> &getField() const;
-
-};
-
-
-class SolverGodunov : public SolverFVM {
-    long double w_l(int n, int i, long double t) override;
-    long double w_r(int n, int i, long double t) override;
-
-public:
-    SolverGodunov(long double T1, long double T2, long double X1, long double X2, unsigned int n_x, long double CFL,
-                  long double(*f_a)(long double, long double, long double),
-                  long double(*df_a)(long double, long double, long double),
-                  long double(*f_beg)(long double));
-
 
 };
 

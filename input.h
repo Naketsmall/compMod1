@@ -30,6 +30,28 @@ long double f_beg_disc(long double x) {
     return x >= 0l ? 1 : -1;
 }
 
+class SolverGodunov : public SolverFVM {
+    long double w_r(int n, int i, long double t) override {
+        if (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x]) >= 0)
+            return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x])) / 2 *
+                   field[n][i];
+        else
+            return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x])) / 2 *
+                   field[n][(n_x + i + 1) % n_x];
+    }
+
+public:
+    SolverGodunov(long double T1, long double T2, long double X1, long double X2, unsigned int n_x,
+                  long double CFL,
+                  long double (*f_a)(long double, long double, long double),
+                  long double (*df_a)(long double, long double, long double),
+                  long double (*f_beg)(long double)) : SolverFVM(T1, T2, X1, X2, n_x, CFL, f_a, df_a, f_beg) {}
+
+
+};
+
+
+
 long double X1 = -1;
 long double X2 = 1;
 long double T1 = 0;

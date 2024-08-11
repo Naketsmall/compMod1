@@ -28,13 +28,7 @@ SolverFVM::SolverFVM(long double T1, long double T2, long double X1, long double
 }
 
 void SolverFVM::calculate_cell(int n, int i, long double t) { // works for layers 1, 2... not for 0
-    field[n][i] = field[n - 1][i] - taus[n] / h * (w_r(n - 1, i, t) - w_l(n - 1, i, t));
-}
-
-
-
-const std::vector<std::vector<long double>> &SolverFVM::getField() const {
-    return field;
+    field[n][i] = field[n - 1][i] - taus[n] / h * (w_r(n - 1, i, t) - w_r(n - 1, i-1, t));
 }
 
 int SolverFVM::calculate() { // Посчитано для периодичных ГУ
@@ -71,55 +65,10 @@ int SolverFVM::calculate() { // Посчитано для периодичных
     return 0;
 }
 
+const std::vector<std::vector<long double>> &SolverFVM::getField() const {
+    return field;
+}
+
 const std::vector<long double> &SolverFVM::getTaus() const {
     return taus;
 }
-
-
-long double SolverGodunov::w_l(int n, int i, long double t) { // TODO: Доработать для объемов, а не узлов
-    //return f_a(t, X1+i*h, (field[n][(n_x + i - 1) % n_x]+field[n][i])/2);
-    if (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i - 1) * h, field[n][(n_x + i - 1) % n_x]) >= 0)
-        return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i - 1) * h, field[n][(n_x + i - 1) % n_x])) / 2 *
-            field[n][(n_x + i - 1) % n_x];
-    else
-        return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i - 1) * h, field[n][(n_x + i - 1) % n_x])) / 2 *
-               field[n][i];
-}
-
-long double SolverGodunov::w_r(int n, int i, long double t) { // TODO: Доработать для объемов, а не узлов
-    //return f_a(t, X1+(i+1)*h, (field[n][i]+field[n][(i+1) % n_x])/2);
-    if (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x]) >= 0)
-        return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x])) / 2 *
-            field[n][i];
-    else
-        return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x])) / 2 *
-               field[n][(n_x + i + 1) % n_x];
-}
-/*
-long double SolverGodunov::w_l(int n, int i, long double t) {
-    if (df_a(t, X1 + i * h, (field[n][i] + field[n][(n_x+i-1) % n_x])/2) >= 0) {
-        printf("w_l: bigger\n");
-        return f_a(t, X1 + i * h, field[n][(n_x + i - 1) / n_x]);
-    }
-    else
-        return f_a(t, X1 + i * h, field[n][i]);
-}
-
-long double SolverGodunov::w_r(int n, int i, long double t) {
-    if (df_a(t, X1 + (i+1) * h, (field[n][i] + field[n][(i+1) % n_x])/2) >= 0) {
-        printf("w_r: bigger\n");
-        return f_a(t, X1 + (i + 1) * h, field[n][i]);
-    }
-    else
-        return f_a(t, X1 + (i+1) * h, field[n][(i+1) % n_x]);
-}*/
-
-SolverGodunov::SolverGodunov(long double T1, long double T2, long double X1, long double X2, unsigned int n_x,
-                             long double CFL,
-                             long double (*f_a)(long double, long double, long double),
-                             long double (*df_a)(long double, long double, long double),
-                             long double (*f_beg)(long double)) : SolverFVM(T1, T2, X1, X2, n_x, CFL, f_a, df_a, f_beg) {
-
-}
-
-
