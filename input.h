@@ -15,11 +15,11 @@ std::string outDiffFilename = "difference.csv";
 
 
 long double f_a(long double t, long double x, long double u) {
-    return u;
+    return u*u/2;
 }
 
 long double df_a(long double t, long double x, long double u) {
-    return 1;
+    return u;
 }
 
 long double f_beg(long double x) {
@@ -32,12 +32,28 @@ long double f_beg_disc(long double x) {
 
 class SolverGodunov : public SolverFVM {
     long double w_r(int n, int i, long double t) override {
+        long double u_r;
+        if (field[n][i] >= field[n][(n_x + i+1) % n_x]) {
+            if (field[n][i] + field[n][(n_x + i+1) % n_x] >= 0)
+                u_r = field[n][i];
+            else
+                u_r = field[n][(n_x + i+1) % n_x];
+        } else {
+            if (i*h/t <= field[n][i])
+                u_r = field[n][i];
+            else if (field[n][i] < i*h/t <= field[n][(n_x + i+1) % n_x])
+                u_r = i*h/t;
+            else
+                u_r = field[n][(n_x + i+1) % n_x];
+        }
+        return f_a(t, h*i, u_r);
+        /*
         if (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x]) >= 0)
             return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x])) / 2 *
                    field[n][i];
         else
             return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x])) / 2 *
-                   field[n][(n_x + i + 1) % n_x];
+                   field[n][(n_x + i + 1) % n_x];*/
     }
 
 public:
@@ -55,7 +71,7 @@ public:
 long double X1 = -1;
 long double X2 = 1;
 long double T1 = 0;
-long double T2 = 2;
+long double T2 = 1;
 long double CFL = 0.9l;
 unsigned int n_x = 100;
 

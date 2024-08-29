@@ -12,13 +12,6 @@ int main() {
     s1.calculate();
     std::vector<std::vector<long double>> field = s1.getField();
 
-    //long double T = 2;
-    //long double tau = 0.008;
-    //long double X = 1;
-    //long double h = X / n_x;
-    //Verifier v1 = Verifier(field, T, tau, X, h, f_a(0, 1, 0), &f_beg);
-
-
     //std::ofstream out_acc(outExactFilename);
     //out_acc << vector2d_to_string(v1.getAccurate());
     //out_acc.close();
