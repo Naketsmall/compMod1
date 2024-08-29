@@ -28,7 +28,7 @@ SolverFVM::SolverFVM(long double T1, long double T2, long double X1, long double
 }
 
 void SolverFVM::calculate_cell(int n, int i, long double t) { // works for layers 1, 2... not for 0
-    field[n][i] = field[n - 1][i] - taus[n] / h * (w_r(n - 1, i, t) - w_r(n - 1, i-1, t));
+    field[n][i] = field[n - 1][i] - taus[n] / h * (w_r(n - 1, i, t-taus[n]) - w_r(n - 1, i-1, t-taus[n]));
 }
 
 int SolverFVM::calculate() { // Посчитано для периодичных ГУ

@@ -22,38 +22,44 @@ long double df_a(long double t, long double x, long double u) {
     return u;
 }
 
+long double ddf_a(long double t, long double x, long double u) {
+    return 1;
+}
+
 long double f_beg(long double x) {
     return 0.25 + 0.5*std::sin(PI*x);
 }
 
 long double f_beg_disc(long double x) {
-    return x >= 0l ? 1 : -1;
+    return x >= 0l ? 0.7 : -1;
 }
 
 class SolverGodunov : public SolverFVM {
     long double w_r(int n, int i, long double t) override {
         long double u_r;
-        if (field[n][i] >= field[n][(n_x + i+1) % n_x]) {
-            if (field[n][i] + field[n][(n_x + i+1) % n_x] >= 0)
+        if (field[n][i] > field[n][i+1]) {
+            if (field[n][i] + field[n][(i+1) % n_x] > 0)
                 u_r = field[n][i];
             else
-                u_r = field[n][(n_x + i+1) % n_x];
+                u_r = field[n][(i+1) % n_x];
         } else {
-            if (i*h/t <= field[n][i])
+            if (field[n][i] > 0)
                 u_r = field[n][i];
-            else if (field[n][i] < i*h/t <= field[n][(n_x + i+1) % n_x])
-                u_r = i*h/t;
+            else if (field[n][(i+1) % n_x] < 0)
+                    u_r = field[n][(i+1) % n_x];
             else
-                u_r = field[n][(n_x + i+1) % n_x];
+                u_r = 0;
         }
         return f_a(t, h*i, u_r);
+
         /*
         if (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x]) >= 0)
             return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x])) / 2 *
                    field[n][i];
         else
             return (df_a(taus[n], i * h, field[n][i]) + df_a(taus[n], (i + 1) * h, field[n][(i+1) % n_x])) / 2 *
-                   field[n][(n_x + i + 1) % n_x];*/
+                   field[n][(n_x + i + 1) % n_x];
+                   */
     }
 
 public:
@@ -68,11 +74,11 @@ public:
 
 
 
-long double X1 = -1;
+long double X1 = -0.75;
 long double X2 = 1;
 long double T1 = 0;
-long double T2 = 1;
-long double CFL = 0.9l;
+long double T2 = 4;
+long double CFL = 1l;
 unsigned int n_x = 100;
 
 
