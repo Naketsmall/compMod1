@@ -31,7 +31,7 @@ long double f_beg(long double x) {
 }
 
 long double f_beg_disc(long double x) {
-    return x >= 0l ? 0.7 : -1;
+    return x >= 0l ? -1 : 0.7;
 }
 
 class SolverGodunov : public SolverFVM {
@@ -74,7 +74,7 @@ public:
 
 
 
-long double X1 = -0.75;
+long double X1 = -0.8;
 long double X2 = 1;
 long double T1 = 0;
 long double T2 = 4;
